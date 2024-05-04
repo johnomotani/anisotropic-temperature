@@ -1,4 +1,5 @@
 #include <bout/physicsmodel.hxx>
+#include <bout/invert_pardiv.hxx>
 
 // This macro should already have been defined in bout/field.hxx, but it seems not to be
 // useable in this file, so copy-paste the definition in here.
@@ -39,13 +40,18 @@ class AnisotropicTemperature : public PhysicsModel {
 
   int init(bool UNUSED(restarting)) {
 
-    solver->add(n, "n");
+    solver->add(n_i, "n_i");
     solver->add(V_i, "V_i");
     solver->add(ppar_i, "ppar_i");
     solver->add(pperp_i, "pperp_i");
 
+    solver->add(n_e, "n_e");
+    solver->add(V_e, "V_e");
     solver->add(ppar_e, "ppar_e");
     solver->add(pperp_e, "pperp_e");
+
+    par_solver = InvertParDiv::create();
+    par_solver->setCoefA(1.0 / 1.8e8);
 
     SAVE_REPEAT(Epar);
 
@@ -53,18 +59,21 @@ class AnisotropicTemperature : public PhysicsModel {
   }
 
   int rhs(BoutReal UNUSED(t)) {
-    mesh->communicate(n, V_i, ppar_i, pperp_i, ppar_e, pperp_e);
+    mesh->communicate(n_i, V_i, ppar_i, pperp_i, n_e, V_e, ppar_e, pperp_e);
 
-    Epar = - Grad_par(ppar_e) / n;
+    // Poisson's equation for phi
+    phi = par_solver->solve(n_i - n_e);
 
-    Field3D Tperp_i = pperp_i / n;
-    Field3D Tpar_i = ppar_i / n;
-    Field3D Tperp_e = pperp_e / n;
-    Field3D Tpar_e = ppar_e / n;
+    Epar = - Grad_par(phi);
 
-    Field3D nu_ee = n / Tperp_e / sqrt(Tpar_e);
+    Field3D Tperp_i = pperp_i / n_i;
+    Field3D Tpar_i = ppar_i / n_i;
+    Field3D Tperp_e = pperp_e / n_e;
+    Field3D Tpar_e = ppar_e / n_e;
+
+    Field3D nu_ee = n_e / Tperp_e / sqrt(Tpar_e);
     Field3D nu_ei = nu_ee;
-    Field3D nu_ii = n / Tperp_i / sqrt(m_i * Tpar_i);
+    Field3D nu_ii = n_i / Tperp_i / sqrt(m_i * Tpar_i);
     Field3D nu_ie = nu_ee / m_i;
 
     Field3D betapar_i = m_i / Tpar_i;
@@ -142,10 +151,10 @@ class AnisotropicTemperature : public PhysicsModel {
                                                  + 4.0 * alpha_ee * Kee_004
                                                  - 1.5 * Kee_002);
 
-    Field3D grad_Tperp_i = Grad_par(pperp_i/n);
-    Field3D grad_Tpar_i = Grad_par(ppar_i/n);
-    Field3D grad_Tperp_e = Grad_par(pperp_e/n);
-    Field3D grad_Tpar_e = Grad_par(ppar_e/n);
+    Field3D grad_Tperp_i = Grad_par(Tperp_i);
+    Field3D grad_Tpar_i = Grad_par(Tpar_i);
+    Field3D grad_Tperp_e = Grad_par(Tperp_e);
+    Field3D grad_Tpar_e = Grad_par(Tpar_e);
 
     Field3D S_perp_i_par = S_perp_s_par(cperp_i, cpar_i, eperp_i, epar_i, ppar_i,
                                         grad_Tperp_i, grad_Tpar_i, m_i);
@@ -156,28 +165,28 @@ class AnisotropicTemperature : public PhysicsModel {
     Field3D S_par_e_par = S_par_s_par(cperp_e, cpar_e, eperp_e, epar_e, ppar_e,
                                       grad_Tperp_e, grad_Tpar_e, 1.0);
 
-    Field3D J_ii_perp_perp = J_sr_perp_perp(n, nu_ii, m_i, m_i, Kii_200, Tperp_i, Tperp_i,
+    Field3D J_ii_perp_perp = J_sr_perp_perp(n_i, nu_ii, m_i, m_i, Kii_200, Tperp_i, Tperp_i,
                                             Kii_002);
-    Field3D J_ie_perp_perp = J_sr_perp_perp(n, nu_ie, m_i, 1.0, Kie_200, Tperp_i, Tperp_e,
+    Field3D J_ie_perp_perp = J_sr_perp_perp(n_i, nu_ie, m_i, 1.0, Kie_200, Tperp_i, Tperp_e,
                                             Kie_002);
-    Field3D J_ii_par_par = J_sr_par_par(n, nu_ii, m_i, m_i, alpha_ii, Kii_002, Tpar_i,
+    Field3D J_ii_par_par = J_sr_par_par(n_i, nu_ii, m_i, m_i, alpha_ii, Kii_002, Tpar_i,
                                         Tpar_i, Kii_200);
-    Field3D J_ie_par_par = J_sr_par_par(n, nu_ie, m_i, 1.0, alpha_ie, Kie_002, Tpar_i,
+    Field3D J_ie_par_par = J_sr_par_par(n_i, nu_ie, m_i, 1.0, alpha_ie, Kie_002, Tpar_i,
                                         Tpar_e, Kie_200);
-    Field3D J_ee_perp_perp = J_sr_perp_perp(n, nu_ee, 1.0, 1.0, Kee_200, Tperp_e, Tperp_e,
+    Field3D J_ee_perp_perp = J_sr_perp_perp(n_e, nu_ee, 1.0, 1.0, Kee_200, Tperp_e, Tperp_e,
                                             Kee_002);
-    Field3D J_ei_perp_perp = J_sr_perp_perp(n, nu_ei, 1.0, m_i, Kei_200, Tperp_e, Tperp_i,
+    Field3D J_ei_perp_perp = J_sr_perp_perp(n_e, nu_ei, 1.0, m_i, Kei_200, Tperp_e, Tperp_i,
                                             Kei_002);
-    Field3D J_ee_par_par = J_sr_par_par(n, nu_ee, 1.0, 1.0, alpha_ee, Kee_002, Tpar_e,
+    Field3D J_ee_par_par = J_sr_par_par(n_e, nu_ee, 1.0, 1.0, alpha_ee, Kee_002, Tpar_e,
                                         Tpar_e, Kee_200);
-    Field3D J_ei_par_par = J_sr_par_par(n, nu_ei, 1.0, m_i, alpha_ei, Kei_002, Tpar_e,
+    Field3D J_ei_par_par = J_sr_par_par(n_e, nu_ei, 1.0, m_i, alpha_ei, Kei_002, Tpar_e,
                                         Tpar_i, Kei_200);
 
 
-    ddt(n) = - Div_par_flux(V_i, n);
+    ddt(n_i) = - Div_par_flux(V_i, n_i);
 
     ddt(V_i) = - Vpar_Grad_par(V_i, V_i)
-               - Grad_par(ppar_i) / (m_i * n)
+               - Grad_par(ppar_i) / (m_i * n_i)
                + Epar / m_i;
 
     ddt(pperp_i) = - Vpar_Grad_par(V_i, pperp_i)
@@ -192,14 +201,20 @@ class AnisotropicTemperature : public PhysicsModel {
                   + J_ii_par_par + J_ie_par_par;
     //ddt(ppar_i) = 0.0;
 
-    ddt(pperp_e) = - Vpar_Grad_par(V_i, pperp_e)
-                   - pperp_e * Grad_par(V_i)
+    ddt(n_e) = - Div_par_flux(V_e, n_e);
+
+    ddt(V_e) = - Vpar_Grad_par(V_e, V_e)
+               - Grad_par(ppar_e) / n_e
+               - Epar;
+
+    ddt(pperp_e) = - Vpar_Grad_par(V_e, pperp_e)
+                   - pperp_e * Grad_par(V_e)
                    - Grad_par(S_perp_e_par)
                    + J_ee_perp_perp + J_ei_perp_perp;
     //ddt(pperp_e) = 0.0;
 
-    ddt(ppar_e) = - Vpar_Grad_par(V_i, ppar_e)
-                  - 3.0 * ppar_e * Grad_par(V_i)
+    ddt(ppar_e) = - Vpar_Grad_par(V_e, ppar_e)
+                  - 3.0 * ppar_e * Grad_par(V_e)
                   - Grad_par(S_par_e_par)
                   + J_ee_par_par
                   + J_ei_par_par
@@ -208,17 +223,18 @@ class AnisotropicTemperature : public PhysicsModel {
     return 0;
   }
 
-  Field3D n;
-  Field3D V_i, ppar_i, pperp_i;
-  Field3D ppar_e, pperp_e;
-  Field3D Epar;
+  Field3D n_i, V_i, ppar_i, pperp_i;
+  Field3D n_e, V_e, ppar_e, pperp_e;
+  Field3D phi, Epar;
+
+  std::unique_ptr<InvertParDiv> par_solver;
 
   // Deuteron mass normalised to electron mass
   const BoutReal m_i = 3.3435837724e-27 / 9.1093837015e-31;
 
   const BoutReal epsilon_near_zero = 1.0e-6;
 
-  BoutReal phi(const BoutReal& X) {
+  BoutReal phi_K(const BoutReal& X) {
     // copysign means the result returned has the same sign as X. Note that this function
     // should never be called very near to X=0.
     if (X > 0.0) {
@@ -229,7 +245,7 @@ class AnisotropicTemperature : public PhysicsModel {
   }
 
   BoutReal K004_singular(const BoutReal& X) {
-    return (2.0 + 1.0 / (1.0 + X) - 3.0 * phi(X)) / SQ(X);
+    return (2.0 + 1.0 / (1.0 + X) - 3.0 * phi_K(X)) / SQ(X);
   }
   BoutReal K004(const BoutReal& X) {
     // We know that the function is non-singular and linear in X near X=0. To avoid
@@ -246,7 +262,7 @@ class AnisotropicTemperature : public PhysicsModel {
   FIELD_FUNC(K004, K004)
 
   BoutReal K202_singular(const BoutReal& X) {
-    return 0.5 * (-3.0 + (3.0 * X) * phi(X)) / SQ(X);
+    return 0.5 * (-3.0 + (3.0 * X) * phi_K(X)) / SQ(X);
   }
   BoutReal K202(const BoutReal& X) {
     // We know that the function is non-singular and linear in X near X=0. To avoid
@@ -263,7 +279,7 @@ class AnisotropicTemperature : public PhysicsModel {
   FIELD_FUNC(K202, K202)
 
   BoutReal K200_singular(const BoutReal& X) {
-    return (-1.0 + (1.0 + X) * phi(X)) / X;
+    return (-1.0 + (1.0 + X) * phi_K(X)) / X;
   }
   BoutReal K200(const BoutReal& X) {
     // We know that the function is non-singular and linear in X near X=0. To avoid
@@ -280,7 +296,7 @@ class AnisotropicTemperature : public PhysicsModel {
   FIELD_FUNC(K200, K200)
 
   BoutReal K002_singular(const BoutReal& X) {
-    return 2.0 * (1.0 - phi(X)) / X;
+    return 2.0 * (1.0 - phi_K(X)) / X;
   }
   BoutReal K002(const BoutReal& X) {
     // We know that the function is non-singular and linear in X near X=0. To avoid
@@ -297,7 +313,7 @@ class AnisotropicTemperature : public PhysicsModel {
   FIELD_FUNC(K002, K002)
 
   BoutReal K220_singular(const BoutReal& X) {
-    return 0.125 * (3.0 + X + (1.0 + X) * (X - 3.0) * phi(X)) / SQ(X);
+    return 0.125 * (3.0 + X + (1.0 + X) * (X - 3.0) * phi_K(X)) / SQ(X);
   }
   BoutReal K220(const BoutReal& X) {
     // We know that the function is non-singular and linear in X near X=0. To avoid
@@ -314,7 +330,7 @@ class AnisotropicTemperature : public PhysicsModel {
   FIELD_FUNC(K220, K220)
 
   BoutReal K222_singular(const BoutReal& X) {
-    return 0.0625 * (15.0 + X + (-15.0 - 6.0 * X + SQ(X)) * phi(X)) / (X*X*X);
+    return 0.0625 * (15.0 + X + (-15.0 - 6.0 * X + SQ(X)) * phi_K(X)) / (X*X*X);
   }
   BoutReal K222(const BoutReal& X) {
     // We know that the function is non-singular and linear in X near X=0. To avoid
@@ -331,7 +347,7 @@ class AnisotropicTemperature : public PhysicsModel {
   FIELD_FUNC(K222, K222)
 
   BoutReal K204_singular(const BoutReal& X) {
-    return 0.25 * (-13.0 - 2.0 / (1.0 + X) + (15.0 + 3.0 * X) * phi(X)) / (X*X*X);
+    return 0.25 * (-13.0 - 2.0 / (1.0 + X) + (15.0 + 3.0 * X) * phi_K(X)) / (X*X*X);
   }
   BoutReal K204(const BoutReal& X) {
     // We know that the function is non-singular and linear in X near X=0. To avoid
@@ -348,7 +364,7 @@ class AnisotropicTemperature : public PhysicsModel {
   FIELD_FUNC(K204, K204)
 
   BoutReal K006_singular(const BoutReal& X) {
-    return 0.5 * (8.0 + 9.0 / (1.0 + X) - 2.0 / SQ(1.0 + X) - 15.0 * phi(X)) / (X*X*X);
+    return 0.5 * (8.0 + 9.0 / (1.0 + X) - 2.0 / SQ(1.0 + X) - 15.0 * phi_K(X)) / (X*X*X);
   }
   BoutReal K006(const BoutReal& X) {
     // We know that the function is non-singular and linear in X near X=0. To avoid

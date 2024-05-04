@@ -555,5 +555,56 @@ Finally note that (neglecting any difference between
 
 \end_layout
 
+\begin_layout Section
+Non-quasineutral
+\end_layout
+
+\begin_layout Standard
+If we do not assume that the plasma is quasineutral, we have to solve Poisson's
+ equation to get 
+\begin_inset Formula $\phi$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\nabla^{2}\phi=\nabla_{\|}^{2}\phi=\frac{e\left(n_{i}-n_{e}\right)}{\epsilon_{0}}.
+\]
+
+\end_inset
+
+Normalising this
+\begin_inset Formula 
+\begin{align*}
+\frac{T_{ref}}{e\lambda_{ref}^{2}}\hat{\nabla}^{2}\hat{\phi} & =\frac{en_{ref}}{\epsilon_{0}}\left(\hat{n}_{i}-\hat{n}_{e}\right)\\
+\hat{\nabla}^{2}\hat{\phi} & =\frac{e^{2}n_{ref}\lambda_{ref}^{2}}{\epsilon_{0}T_{ref}}\left(\hat{n}_{i}-\hat{n}_{e}\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula $\frac{e^{2}n_{ref}\lambda_{ref}^{2}}{\epsilon_{0}T_{ref}}$
+\end_inset
+
+ is a very large number.
+ For 
+\begin_inset Formula $n_{ref}=10^{19}m^{-3}$
+\end_inset
+
+, 
+\begin_inset Formula $\lambda_{ref}=0.1m$
+\end_inset
+
+, 
+\begin_inset Formula $T_{ref}=10eV$
+\end_inset
+
+ it would be 
+\begin_inset Formula $1.8\times10^{8}$
+\end_inset
+
+.
+\end_layout
+
 \end_body
 \end_document
