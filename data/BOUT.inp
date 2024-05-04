@@ -1,5 +1,5 @@
 nout = 100
-timestep = 1.0e-6 #0.1
+timestep = 10.0
 
 [n]
 function = 1.0
@@ -8,16 +8,17 @@ function = 1.0
 function = 0.0
 
 [pperp_i]
-function = 1.0 #ballooning(1.0 + gauss(y-8*pi/5, 0.2))
+function = 1.0 + 0.01 * gauss(y-8*pi/5, 0.2)
 
 [ppar_i]
-function = 1.0 #ballooning(1.0 + gauss(y-6*pi/5, 0.2))
+function = 1.0 + 0.01 * gauss(y-6*pi/5, 0.2)
 
 [ppar_e]
-function = ballooning(1.0 + gauss(y-4*pi/5, 0.2))
+function = 1.0 + 0.01 * gauss(y-4*pi/5, 0.2)
 
 [pperp_e]
-function = 1.0 #ballooning(1.0 + gauss(y-2*pi/5, 0.2))
+function = 1.0 + 0.01 * gauss(y-2*pi/5, 0.2)
+#function = 1.0
 
 [mesh]
 Ly = 1000 # Measured in units of mean-free-paths at the reference parameters
@@ -27,15 +28,21 @@ ny = 64
 nz = 1
 dy = Ly / ny
 
+[mesh:ddy]
+first = C2
+second = C2
+upwind = U1
+flux = U1
+
 [solver]
 #start_timestep = 1.0e-30
 type = cvode
 mxstep = 1000000
-rtol = 1.0e-8
-atol = 1.0e-10
+#rtol = 1.0e-8
+#atol = 1.0e-10
+#
+#cvode_max_order = 1
+#maxl = 100
+#max_nonlinear_iterations = 20
 
-cvode_max_order = 1
-maxl = 100
-max_nonlinear_iterations = 20
-
-diagnose = true
+#diagnose = true

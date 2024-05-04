@@ -47,14 +47,15 @@ class AnisotropicTemperature : public PhysicsModel {
     solver->add(ppar_e, "ppar_e");
     solver->add(pperp_e, "pperp_e");
 
+    SAVE_REPEAT(Epar);
+
     return 0;
   }
 
   int rhs(BoutReal UNUSED(t)) {
-
     mesh->communicate(n, V_i, ppar_i, pperp_i, ppar_e, pperp_e);
 
-    Field3D Epar = - Grad_par(ppar_e) / n;
+    Epar = - Grad_par(ppar_e) / n;
 
     Field3D Tperp_i = pperp_i / n;
     Field3D Tpar_i = ppar_i / n;
@@ -177,30 +178,31 @@ class AnisotropicTemperature : public PhysicsModel {
 
     ddt(V_i) = - Vpar_Grad_par(V_i, V_i)
                - Grad_par(ppar_i) / (m_i * n)
-               - Epar / m_i;
+               + Epar / m_i;
 
-    //ddt(pperp_i) = - Vpar_Grad_par(V_i, pperp_i)
-    //               - pperp_i * Grad_par(V_i)
-    //               - Grad_par(S_perp_i_par)
-    //               + J_ii_perp_perp + J_ie_perp_perp;
-    ddt(pperp_i) = 0.0;
+    ddt(pperp_i) = - Vpar_Grad_par(V_i, pperp_i)
+                   - pperp_i * Grad_par(V_i)
+                   - Grad_par(S_perp_i_par)
+                   + J_ii_perp_perp + J_ie_perp_perp;
+    //ddt(pperp_i) = 0.0;
 
-    //ddt(ppar_i) = - Vpar_Grad_par(V_i, ppar_i)
-    //              - 3.0 * ppar_i * Grad_par(V_i)
-    //              - Grad_par(S_par_i_par)
-    //              + J_ii_par_par + J_ie_par_par;
-    ddt(ppar_i) = 0.0;
+    ddt(ppar_i) = - Vpar_Grad_par(V_i, ppar_i)
+                  - 3.0 * ppar_i * Grad_par(V_i)
+                  - Grad_par(S_par_i_par)
+                  + J_ii_par_par + J_ie_par_par;
+    //ddt(ppar_i) = 0.0;
 
-    //ddt(pperp_e) = - Vpar_Grad_par(V_i, pperp_e)
-    //               - pperp_e * Grad_par(V_i)
-    //               - Grad_par(S_perp_e_par)
-    //               + J_ee_perp_perp + J_ei_perp_perp;
-    ddt(pperp_e) = 0.0;
+    ddt(pperp_e) = - Vpar_Grad_par(V_i, pperp_e)
+                   - pperp_e * Grad_par(V_i)
+                   - Grad_par(S_perp_e_par)
+                   + J_ee_perp_perp + J_ei_perp_perp;
+    //ddt(pperp_e) = 0.0;
 
     ddt(ppar_e) = - Vpar_Grad_par(V_i, ppar_e)
                   - 3.0 * ppar_e * Grad_par(V_i)
-                  //- Grad_par(S_par_e_par)
-                  //+ J_ee_par_par + J_ei_par_par
+                  - Grad_par(S_par_e_par)
+                  + J_ee_par_par
+                  + J_ei_par_par
                   ;
 
     return 0;
@@ -209,6 +211,7 @@ class AnisotropicTemperature : public PhysicsModel {
   Field3D n;
   Field3D V_i, ppar_i, pperp_i;
   Field3D ppar_e, pperp_e;
+  Field3D Epar;
 
   // Deuteron mass normalised to electron mass
   const BoutReal m_i = 3.3435837724e-27 / 9.1093837015e-31;
@@ -218,7 +221,11 @@ class AnisotropicTemperature : public PhysicsModel {
   BoutReal phi(const BoutReal& X) {
     // copysign means the result returned has the same sign as X. Note that this function
     // should never be called very near to X=0.
-    return copysign(std::atan(std::sqrt(std::abs(X))) / std::sqrt(std::abs(X)), X);
+    if (X > 0.0) {
+      return std::atan(std::sqrt(X)) / std::sqrt(X);
+    } else {
+      return std::atanh(std::sqrt(-X)) / std::sqrt(-X);
+    }
   }
 
   BoutReal K004_singular(const BoutReal& X) {
@@ -392,7 +399,7 @@ class AnisotropicTemperature : public PhysicsModel {
     Field3D betapar_s = m_s / Tpar_s;
     Field3D betapar_sr = betapar_s * betapar_r / (betapar_s + betapar_r);
     return 8.0 * m_s * n * nu_sr / (m_r + m_s) * alpha_sr *
-           (2.0 * Ksr_002 * (Tpar_r - Tpar_s) + m_r / betapar_sr * (Ksr_200 - Ksr_002));
+           (Ksr_002 * (Tpar_r - Tpar_s) + m_r / betapar_sr * (Ksr_200 - Ksr_002));
   }
 };
 
