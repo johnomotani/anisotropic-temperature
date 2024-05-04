@@ -1,5 +1,6 @@
 #include <bout/physicsmodel.hxx>
 #include <bout/invert_pardiv.hxx>
+#include <bout/interpolation.hxx>
 
 // This macro should already have been defined in bout/field.hxx, but it seems not to be
 // useable in this file, so copy-paste the definition in here.
@@ -41,20 +42,24 @@ class AnisotropicTemperature : public PhysicsModel {
   int init(bool UNUSED(restarting)) {
 
     solver->add(n_i, "n_i");
-    V_i.setLocation(CELL_YLOW);
-    solver->add(V_i, "V_i");
+    nV_i.setLocation(CELL_YLOW);
+    solver->add(nV_i, "nV_i");
     solver->add(ppar_i, "ppar_i");
     solver->add(pperp_i, "pperp_i");
 
     solver->add(n_e, "n_e");
-    V_e.setLocation(CELL_YLOW);
-    solver->add(V_e, "V_e");
+    nV_e.setLocation(CELL_YLOW);
+    solver->add(nV_e, "nV_e");
     solver->add(ppar_e, "ppar_e");
     solver->add(pperp_e, "pperp_e");
 
     par_solver = InvertParDiv::create();
     par_solver->setCoefA(1.0 / 1.8e8);
 
+    V_i.setLocation(CELL_YLOW);
+    SAVE_REPEAT(V_i);
+    V_e.setLocation(CELL_YLOW);
+    SAVE_REPEAT(V_e);
     Epar.setLocation(CELL_YLOW);
     SAVE_REPEAT(Epar);
 
@@ -62,12 +67,13 @@ class AnisotropicTemperature : public PhysicsModel {
   }
 
   int rhs(BoutReal UNUSED(t)) {
-    mesh->communicate(n_i, V_i, ppar_i, pperp_i, n_e, V_e, ppar_e, pperp_e);
+    mesh->communicate(n_i, nV_i, ppar_i, pperp_i, n_e, nV_e, ppar_e, pperp_e);
 
     // Poisson's equation for phi
     phi = par_solver->solve(n_i - n_e);
 
-    Epar = - Grad_par(phi, CELL_YLOW);
+    V_i = nV_i / interp_to(n_i, CELL_YLOW);
+    V_e = nV_e / interp_to(n_e, CELL_YLOW);
 
     Field3D Tperp_i = pperp_i / n_i;
     Field3D Tpar_i = ppar_i / n_i;
@@ -185,12 +191,15 @@ class AnisotropicTemperature : public PhysicsModel {
     Field3D J_ei_par_par = J_sr_par_par(n_e, nu_ei, 1.0, m_i, alpha_ei, Kei_002, Tpar_e,
                                         Tpar_i, Kei_200);
 
+    mesh->communicate(phi, S_perp_i_par, S_par_i_par, S_perp_e_par, S_par_e_par);
+
+    Epar = - Grad_par(phi, CELL_YLOW);
 
     ddt(n_i) = - Div_par_flux(V_i, n_i, CELL_CENTRE);
 
-    ddt(V_i) = - Vpar_Grad_par(V_i, V_i)
-               - Grad_par(ppar_i, CELL_YLOW) / (m_i * n_i)
-               + Epar / m_i;
+    ddt(nV_i) = - Div_par_flux(V_i, nV_i, CELL_YLOW)
+                - Grad_par(ppar_i, CELL_YLOW) / m_i
+                + interp_to(n_i, CELL_YLOW) * Epar / m_i;
 
     ddt(pperp_i) = - Vpar_Grad_par(V_i, pperp_i, CELL_CENTRE)
                    - pperp_i * Grad_par(V_i, CELL_CENTRE)
@@ -206,9 +215,9 @@ class AnisotropicTemperature : public PhysicsModel {
 
     ddt(n_e) = - Div_par_flux(V_e, n_e, CELL_CENTRE);
 
-    ddt(V_e) = - Vpar_Grad_par(V_e, V_e)
-               - Grad_par(ppar_e, CELL_YLOW) / n_e
-               - Epar;
+    ddt(nV_e) = - Div_par_flux(V_e, nV_e, CELL_YLOW)
+                - Grad_par(ppar_e, CELL_YLOW)
+                - interp_to(n_e, CELL_YLOW) * Epar;
 
     ddt(pperp_e) = - Vpar_Grad_par(V_e, pperp_e, CELL_CENTRE)
                    - pperp_e * Grad_par(V_e, CELL_CENTRE)
@@ -226,8 +235,9 @@ class AnisotropicTemperature : public PhysicsModel {
     return 0;
   }
 
-  Field3D n_i, V_i, ppar_i, pperp_i;
-  Field3D n_e, V_e, ppar_e, pperp_e;
+  Field3D n_i, nV_i, ppar_i, pperp_i;
+  Field3D n_e, nV_e, ppar_e, pperp_e;
+  Field3D V_i, V_e;
   Field3D phi, Epar;
 
   std::unique_ptr<InvertParDiv> par_solver;

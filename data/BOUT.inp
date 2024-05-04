@@ -4,7 +4,7 @@ timestep = 10.0
 [n_i]
 function = 1.0
 
-[V_i]
+[nV_i]
 function = 0.0
 
 [pperp_i]
@@ -16,7 +16,7 @@ function = 1.0 + 0.01 * gauss(y-6*pi/5, 0.2)
 [n_e]
 function = 1.0
 
-[V_e]
+[nV_e]
 function = 0.0
 
 [ppar_e]
