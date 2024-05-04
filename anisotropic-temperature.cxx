@@ -174,6 +174,8 @@ class AnisotropicTemperature : public PhysicsModel {
                                         Tpar_i, Kei_200);
 
 
+    mesh->communicate(S_perp_i_par, S_par_i_par, S_perp_e_par, S_par_e_par);
+
     ddt(n) = - Div_par_flux(V_i, n);
 
     ddt(V_i) = - Vpar_Grad_par(V_i, V_i)
