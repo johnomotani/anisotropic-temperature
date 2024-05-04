@@ -1,0 +1,559 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language british
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2cm
+\bottommargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style british
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+Normalise:
+\end_layout
+
+\begin_layout Itemize
+times to the electron-electron collision time 
+\begin_inset Formula $\tau_{ref}=\tau_{ee}(n_{ref},T_{ref})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+densities to reference density 
+\begin_inset Formula $n_{ref}=10^{19}m^{-3}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+mass to electron mass 
+\begin_inset Formula $m_{e}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+energy to 
+\begin_inset Formula $T_{ref}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+pressure to 
+\begin_inset Formula $n_{ref}T_{ref}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+electric potential to 
+\begin_inset Formula $T_{ref}/e$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Derived quantities:
+\end_layout
+
+\begin_layout Itemize
+velocity to electron 
+\begin_inset Quotes bld
+\end_inset
+
+thermal speed
+\begin_inset Quotes brd
+\end_inset
+
+ 
+\begin_inset Formula $v_{ref}=\sqrt{T_{ref}/m_{e}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+length to mean free path 
+\begin_inset Formula $L_{ref}=\lambda_{ref}=v_{ref}\tau_{ee}=\tau_{ee}\sqrt{T_{ref}/m_{e}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Unnormalised equations
+\end_layout
+
+\begin_layout Standard
+Cut-down version of Chodura 1971, dropping perpendicular gradients and also
+ (temporarily?) friction terms.
+ We will replace electron continuity equation with quasineutrality, and
+ neglect electron inertia to solve electron parallel momentum equation for
+ 
+\begin_inset Formula $E_{\|}$
+\end_inset
+
+, assuming ambipolarity 
+\begin_inset Formula $V_{e}=V_{i}$
+\end_inset
+
+.
+ Here for brevity 
+\begin_inset Formula $V_{s}\equiv V_{\|s}$
+\end_inset
+
+, 
+\begin_inset Formula $\nabla=\nabla_{\|}$
+\end_inset
+
+.
+ Assume a straight, uniform magnetic field to simplify the geometric quantities
+ [
+\begin_inset Formula $h_{\|}=1,h_{\perp}=0,\tau_{\|\|}=1,\tau_{\alpha\neq\|,\beta}=0,n_{\|\|}=0,n_{\|\perp}=n_{\perp\parallel}=0,n_{\perp\perp}=1$
+\end_inset
+
+].
+ Equation numbers refer to Chodura 1971
+\begin_inset Newline newline
+\end_inset
+
+(1)
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial\rho_{i}}{\partial t}+\nabla\left(\rho_{i}V_{i}\right) & =0
+\end{align*}
+
+\end_inset
+
+(2)
+\begin_inset Formula 
+\begin{align*}
+\rho_{i}\frac{d_{i}V_{i}}{dt}+\nabla p_{i\|}-\rho_{i}\frac{e}{m_{i}}E_{\|} & =\cancel{\sum_{r}I_{\|}^{ir}}\\
+\nabla p_{e\|}+\rho_{e}\frac{e}{m_{e}}E_{\|} & =0
+\end{align*}
+
+\end_inset
+
+(3)
+\begin_inset Formula 
+\begin{align*}
+\frac{d_{s}p_{s\perp}}{dt}+\left(\nabla V_{s}\right)\left[p_{s\perp}+\pi_{s\|\perp}\right]+\nabla S_{s\|}^{\perp} & =\sum_{r}J_{sr\perp\perp}
+\end{align*}
+
+\end_inset
+
+(4) 
+\begin_inset Formula 
+\[
+\frac{d_{s}p_{s\|}}{dt}+\left(\nabla V_{s}\right)\left[3p_{s\|}+2\pi_{s\|\|}\right]+\nabla S_{s\|}^{\|}=\sum_{r}J_{sr\|\|}
+\]
+
+\end_inset
+
+(17) for us 
+\begin_inset Formula $d^{sr}$
+\end_inset
+
+ vanishes as we have no 
+\begin_inset Formula $V_{\perp}$
+\end_inset
+
+ and we assume the parallel velocities are equal 
+\begin_inset Formula 
+\[
+d_{\alpha}=d_{\alpha}^{sr}=V_{s\alpha}-V_{r\alpha}=0
+\]
+
+\end_inset
+
+(15), (24)
+\begin_inset Formula 
+\[
+\beta_{s\perp}=\frac{m_{s}}{T_{s\perp}},\quad\beta_{s\|}=\frac{m_{s}}{T_{s\|}},\quad b_{s\perp}=\frac{\beta_{s\perp}}{\beta_{s\perp}+\beta_{r\perp}},\quad b_{s\|}=\frac{\beta_{s\|}}{\beta_{s\|}+\beta_{r\|}}
+\]
+
+\end_inset
+
+(29)
+\begin_inset Formula 
+\begin{align*}
+J_{sr\perp\perp} & =\frac{4\rho_{s}\nu_{sr}}{m_{r}+m_{s}}\left[2K_{200}^{sr}\left(T_{r\perp}-T_{s\perp}\right)+\frac{m_{r}}{\beta_{\perp rs}}\left(K_{002}^{sr}-K_{200}^{sr}\right)\right]
+\end{align*}
+
+\end_inset
+
+(21), (20)
+\begin_inset Formula 
+\[
+\beta_{sr\|}=\frac{\beta_{s\|}\beta_{r\|}}{\left(\beta_{s\|}+\beta_{r\|}\right)},\quad\beta_{sr\perp}=\frac{\beta_{s\perp}\beta_{r\perp}}{\left(\beta_{s\perp}+\beta_{r\perp}\right)},\quad\alpha_{sr}=\frac{\beta_{sr\|}}{\beta_{sr\perp}}=\frac{\beta_{s\|}\beta_{r\|}\left(\beta_{s\perp}+\beta_{r\perp}\right)}{\left(\beta_{s\|}+\beta_{r\|}\right)\beta_{s\perp}\beta_{r\perp}}
+\]
+
+\end_inset
+
+(30)
+\begin_inset Formula 
+\[
+J_{sr\|\|}=\frac{8\rho_{s}\nu_{sr}}{m_{r}+m_{s}}\alpha_{sr}\left[K_{002}^{sr}\left(T_{r\|}-T_{s\|}\right)+\frac{m_{r}}{\beta_{rs\|}}\left(K_{200}^{sr}-K_{002}^{sr}\right)\right]
+\]
+
+\end_inset
+
+text, section 4
+\begin_inset Formula 
+\[
+\pi_{e}\approx0
+\]
+
+\end_inset
+
+(62), (63)
+\begin_inset Formula 
+\[
+\pi_{i\perp\perp}=\pi_{i\perp\|}=0
+\]
+
+\end_inset
+
+
+\begin_inset Formula $\pi_{i\|\|}$
+\end_inset
+
+ does not seem to be given, so set (?)
+\begin_inset Formula 
+\[
+\pi_{i\|\|}=0
+\]
+
+\end_inset
+
+(64)
+\begin_inset Formula 
+\[
+S_{s\|}^{\perp}=\frac{1}{\left(c_{\perp}e_{\|}-c_{\|}e_{\perp}\right)}\frac{p_{s\|}}{m_{s}}\left\{ e_{\|}\left(\nabla T_{s\perp}-\cancel{k_{s\|}^{\perp}}\right)-3c_{\|}\left(\nabla T_{s\|}-\cancel{k_{s\|}^{\|}}\right)\right\} 
+\]
+
+\end_inset
+
+(65)
+\begin_inset Formula 
+\[
+S_{s\|}^{\|}=\frac{1}{\left(c_{\|}e_{\perp}-c_{\perp}e_{\|}\right)}\frac{p_{s\|}}{m_{s}}\left\{ e_{\perp}\left(\nabla T_{s\perp}-\cancel{k_{s\|}^{\perp}}\right)-3c_{\perp}\left(\nabla T_{s\|}-\cancel{k_{s\|}^{\|}}\right)\right\} 
+\]
+
+\end_inset
+
+(21)
+\begin_inset Formula 
+\[
+\alpha_{sr}=\frac{\beta_{sr\|}}{\beta_{sr\perp}},\quad X_{sr}=\alpha_{sr}-1
+\]
+
+\end_inset
+
+(36), (37)
+\begin_inset Formula 
+\[
+\psi_{s}=\left(\alpha_{s}\right)^{2}\left(K_{004}^{s}-K_{202}^{s}\right)+\frac{1}{2}\alpha_{s}\left(K_{200}^{s}-K_{002}^{s}\right),\quad\phi_{s}=4K_{220}^{s}-2K_{202}^{s}-K_{200}^{s}+K_{002}^{s}
+\]
+
+\end_inset
+
+definitions on pp.
+ 657-658 - for electrons
+\begin_inset Formula 
+\begin{align*}
+c_{e\perp} & =-4\nu_{ee}\left(6\alpha K_{202}+\frac{\phi_{e}}{2}\right)+4\alpha\nu_{ei}\left(-32K_{222}+4K_{204}+10K_{202}-2K_{004}-K_{002}\right)\\
+c_{e\|} & =2\nu_{ee}\psi_{e}+4\alpha^{2}\nu_{ei}\left(-\frac{8}{3}\alpha K_{204}+\frac{2}{3}\alpha K_{006}+4K_{202}-\left(1-\frac{\alpha}{3}\right)K_{004}-\frac{1}{2}K_{002}\right)\\
+e_{e\perp} & =12\nu_{ee}\phi_{e}+12\nu_{ei}\left(16\alpha K_{222}-4\alpha K_{204}-2\left(2\alpha-1\right)K_{202}+2\alpha K_{004}-K_{002}\right)\\
+e_{e\|} & =-12\nu_{ee}\psi_{e}+4\nu_{ei}\alpha\left(4\alpha^{2}K_{204}-2\alpha^{2}K_{006}-6\alpha K_{202}+4\alpha K_{004}-\frac{3}{2}K_{002}\right)\\
+\boldsymbol{k}_{e}^{\perp} & \propto\boldsymbol{d}_{\|}=0\\
+\boldsymbol{k}_{e}^{\|} & \propto\boldsymbol{d}_{\|}=0
+\end{align*}
+
+\end_inset
+
+and for ions
+\begin_inset Formula 
+\begin{align*}
+c_{i\perp} & =-4\nu_{ii}\left(6\alpha_{i}K_{202}^{i}+\frac{1}{2}\phi_{i}\right)-4\nu_{ie}\left(2K_{002}^{e}+\alpha_{e}K_{002}^{e}\right)\\
+c_{i\|} & =2\psi_{i}\nu_{ii}\\
+e_{i\perp} & =12\phi_{i}\nu_{ii}\\
+e_{i\|} & =-12\psi_{i}\nu_{ii}-12\nu_{ie}\alpha_{e}K_{002}^{e}\\
+\boldsymbol{k}_{i}^{\perp} & =\boldsymbol{k}_{i}^{\|}=0
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Normalised equations
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial\hat{n}_{i}}{\partial\hat{t}}+\hat{\nabla}\left(\hat{n}_{i}\hat{V}_{i}\right) & =0
+\end{align*}
+
+\end_inset
+
+(2)
+\begin_inset Formula 
+\begin{align*}
+\frac{n_{ref}v_{ref}}{\tau_{ref}}\hat{n}_{i}\left(\frac{\partial\hat{V}_{i}}{\partial\hat{t}}+\hat{V}_{i}\hat{\nabla}\hat{V}_{i}\right)+\frac{n_{ref}T_{ref}}{m_{e}\lambda_{ref}}\frac{1}{\hat{m}_{i}}\hat{\nabla}\hat{p}_{i\|}-\frac{e}{m_{e}}n_{ref}\frac{T_{ref}}{e}\frac{1}{\lambda_{ref}}\hat{n}_{i}\frac{1}{\hat{m}_{i}}\hat{E}_{\|} & =0\\
+\frac{n_{ref}T_{ref}}{m_{e}\lambda_{ref}}\hat{n}_{i}\left(\frac{\partial\hat{V}_{i}}{\partial\hat{t}}+\hat{V}_{i}\hat{\nabla}\hat{V}_{i}\right)+\frac{n_{ref}T_{ref}}{m_{e}\lambda_{ref}}\frac{1}{\hat{m}_{i}}\hat{\nabla}\hat{p}_{i\|}-\frac{n_{ref}T_{ref}}{m_{e}\lambda_{ref}}\hat{n}_{i}\frac{1}{\hat{m}_{i}}\hat{E}_{\|} & =0\\
+\frac{\partial\hat{V}_{i}}{\partial\hat{t}}+\hat{V}_{i}\hat{\nabla}\hat{V}_{i}+\frac{1}{\hat{m}_{i}\hat{n}_{i}}\hat{\nabla}\hat{p}_{i\|}-\frac{1}{\hat{m}_{i}}\hat{E}_{\|} & =0
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{n_{ref}T_{ref}}{\lambda_{ref}}\hat{\nabla}\hat{p}_{e\|}+m_{e}\frac{n_{ref}T_{ref}}{e\lambda_{ref}}\hat{n}_{i}\frac{e}{m_{e}}\hat{E}_{\|} & =0\\
+\hat{E}_{\|} & =-\frac{1}{\hat{n}_{i}}\hat{\nabla}\hat{p}_{e\|}
+\end{align*}
+
+\end_inset
+
+(3)
+\begin_inset Formula 
+\begin{align*}
+\frac{n_{ref}T_{ref}}{\tau_{ref}}\left(\frac{\partial\hat{p}_{s\perp}}{\partial\hat{t}}+\hat{V}_{s}\hat{\nabla}\hat{p}_{s\perp}\right)+\frac{v_{ref}n_{ref}T_{ref}}{\lambda_{ref}}\left(\hat{\nabla}\hat{V}_{s}\right)\left[\hat{p}_{s\perp}\right]+\frac{S_{ref}}{\lambda_{ref}}\hat{\nabla}\hat{S}_{s\|}^{\perp} & =J_{ref}\sum_{r}\hat{J}_{sr\perp\perp}\\
+\left(\frac{\partial\hat{p}_{s\perp}}{\partial\hat{t}}+\hat{V}_{s}\hat{\nabla}\hat{p}_{s\perp}\right)+\left(\hat{\nabla}\hat{V}_{s}\right)\left[\hat{p}_{s\perp}\right]+\hat{\nabla}\hat{S}_{s\|}^{\perp} & =\sum_{r}\hat{J}_{sr\perp\perp}
+\end{align*}
+
+\end_inset
+
+with 
+\begin_inset Formula $S_{ref}=n_{ref}v_{ref}T_{ref}$
+\end_inset
+
+ and 
+\begin_inset Formula $J_{ref}=n_{ref}T_{ref}/\tau_{ref}$
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+(4) is similar to (3) dimension-wise - 
+\begin_inset Formula $S^{\|}$
+\end_inset
+
+ is normalised like 
+\begin_inset Formula $S^{\perp}$
+\end_inset
+
+ and 
+\begin_inset Formula $J_{\|\|}$
+\end_inset
+
+ like 
+\begin_inset Formula $J_{\perp\perp}$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\left(\frac{\partial\hat{p}_{s\|}}{\partial\hat{t}}+\hat{V}_{s}\hat{\nabla}\hat{p}_{s\|}\right)+\left(\hat{\nabla}\hat{V}_{s}\right)\left[3\hat{p}_{s\|}\right]+\hat{\nabla}\hat{S}_{s\|}^{\|}=\sum_{r}\hat{J}_{sr\|\|}
+\]
+
+\end_inset
+
+Noting that the 
+\begin_inset Formula $K$
+\end_inset
+
+'s are dimensionless, as are 
+\begin_inset Formula $\alpha_{sr}$
+\end_inset
+
+, 
+\begin_inset Formula $\psi_{s}$
+\end_inset
+
+, 
+\begin_inset Formula $\phi_{s}$
+\end_inset
+
+, we find that 
+\begin_inset Formula $c_{e\perp}=\frac{1}{\tau_{ref}}\hat{c}_{e\perp}$
+\end_inset
+
+, 
+\begin_inset Formula $c_{e\|}=\frac{1}{\tau_{ref}}\hat{c}_{e\|}$
+\end_inset
+
+, 
+\begin_inset Formula $e_{e\perp}=\frac{1}{\tau_{ref}}\hat{e}_{e\perp}$
+\end_inset
+
+, 
+\begin_inset Formula $e_{e\|}=\frac{1}{\tau_{ref}}\hat{e}_{e\|}$
+\end_inset
+
+.
+ 
+\begin_inset Formula $\beta_{s\perp}=\frac{1}{v_{ref}^{2}}\hat{\beta}_{s\perp}$
+\end_inset
+
+, 
+\begin_inset Formula $\beta_{s\|}=\frac{1}{v_{ref}^{2}}\hat{\beta}_{s\|}$
+\end_inset
+
+, 
+\begin_inset Formula $\beta_{sr\perp}=\frac{1}{v_{ref}^{2}}\hat{\beta}_{sr\perp}$
+\end_inset
+
+, and 
+\begin_inset Formula $\beta_{sr\|}=\frac{1}{v_{ref}^{2}}\hat{\beta}_{sr\|}$
+\end_inset
+
+.
+ Using these, we can check that the expressions above for 
+\begin_inset Formula $S_{s\|}^{\perp}$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{s\|}^{\|}$
+\end_inset
+
+ should have dimensions
+\begin_inset Formula 
+\[
+\tau_{ref}^{2}n_{ref}T_{ref}\frac{1}{m_{ref}}\frac{1}{\tau_{ref}}\frac{1}{\lambda_{ref}}T_{ref}=\frac{\tau_{ref}n_{ref}T_{ref}^{2}}{m_{ref}\lambda_{ref}}=\frac{n_{ref}T_{ref}^{2}}{m_{ref}v_{ref}}=\frac{n_{ref}T_{ref}m_{ref}v_{ref}^{2}}{m_{ref}v_{ref}}=n_{ref}T_{ref}v_{ref}
+\]
+
+\end_inset
+
+confirming our 
+\begin_inset Formula $S_{ref}$
+\end_inset
+
+ above, and 
+\begin_inset Formula $J_{\perp\perp}$
+\end_inset
+
+, 
+\begin_inset Formula $J_{\|\|}$
+\end_inset
+
+ should have dimensions
+\begin_inset Formula 
+\[
+m_{e}n_{ref}\frac{1}{\tau_{ref}}\frac{1}{m_{e}}T_{ref}=\frac{n_{ref}T_{ref}}{\tau_{ref}}.
+\]
+
+\end_inset
+
+Finally note that (neglecting any difference between 
+\begin_inset Formula $\ln\Lambda_{ee}$
+\end_inset
+
+, 
+\begin_inset Formula $\ln\Lambda_{ei}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ln\Lambda_{ii}$
+\end_inset
+
+)
+\begin_inset Formula 
+\begin{align*}
+\hat{\nu}_{ee} & =\hat{\nu}_{ei}=\frac{\hat{n}_{i}}{\hat{T}_{e}^{3/2}}\\
+\hat{\nu}_{ii} & =\frac{1}{\sqrt{\hat{m}_{i}}}\frac{\hat{n}_{i}}{\hat{T}_{i}^{3/2}}\\
+\hat{\nu}_{ie} & =\frac{1}{\hat{m}_{i}}\frac{\hat{n}_{i}}{\hat{T}_{e}^{3/2}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
