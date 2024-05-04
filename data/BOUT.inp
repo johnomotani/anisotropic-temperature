@@ -27,6 +27,7 @@ function = 1.0 + 0.01 * gauss(y-2*pi/5, 0.2)
 #function = 1.0
 
 [mesh]
+staggergrids = true
 Ly = 1000 # Measured in units of mean-free-paths at the reference parameters
 MXG = 0
 nx = 1

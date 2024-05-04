@@ -41,11 +41,13 @@ class AnisotropicTemperature : public PhysicsModel {
   int init(bool UNUSED(restarting)) {
 
     solver->add(n_i, "n_i");
+    V_i.setLocation(CELL_YLOW);
     solver->add(V_i, "V_i");
     solver->add(ppar_i, "ppar_i");
     solver->add(pperp_i, "pperp_i");
 
     solver->add(n_e, "n_e");
+    V_e.setLocation(CELL_YLOW);
     solver->add(V_e, "V_e");
     solver->add(ppar_e, "ppar_e");
     solver->add(pperp_e, "pperp_e");
@@ -53,6 +55,7 @@ class AnisotropicTemperature : public PhysicsModel {
     par_solver = InvertParDiv::create();
     par_solver->setCoefA(1.0 / 1.8e8);
 
+    Epar.setLocation(CELL_YLOW);
     SAVE_REPEAT(Epar);
 
     return 0;
@@ -64,7 +67,7 @@ class AnisotropicTemperature : public PhysicsModel {
     // Poisson's equation for phi
     phi = par_solver->solve(n_i - n_e);
 
-    Epar = - Grad_par(phi);
+    Epar = - Grad_par(phi, CELL_YLOW);
 
     Field3D Tperp_i = pperp_i / n_i;
     Field3D Tpar_i = ppar_i / n_i;
@@ -183,39 +186,39 @@ class AnisotropicTemperature : public PhysicsModel {
                                         Tpar_i, Kei_200);
 
 
-    ddt(n_i) = - Div_par_flux(V_i, n_i);
+    ddt(n_i) = - Div_par_flux(V_i, n_i, CELL_CENTRE);
 
     ddt(V_i) = - Vpar_Grad_par(V_i, V_i)
-               - Grad_par(ppar_i) / (m_i * n_i)
+               - Grad_par(ppar_i, CELL_YLOW) / (m_i * n_i)
                + Epar / m_i;
 
-    ddt(pperp_i) = - Vpar_Grad_par(V_i, pperp_i)
-                   - pperp_i * Grad_par(V_i)
-                   - Grad_par(S_perp_i_par)
+    ddt(pperp_i) = - Vpar_Grad_par(V_i, pperp_i, CELL_CENTRE)
+                   - pperp_i * Grad_par(V_i, CELL_CENTRE)
+                   - Grad_par(S_perp_i_par, CELL_CENTRE)
                    + J_ii_perp_perp + J_ie_perp_perp;
     //ddt(pperp_i) = 0.0;
 
-    ddt(ppar_i) = - Vpar_Grad_par(V_i, ppar_i)
-                  - 3.0 * ppar_i * Grad_par(V_i)
-                  - Grad_par(S_par_i_par)
+    ddt(ppar_i) = - Vpar_Grad_par(V_i, ppar_i, CELL_CENTRE)
+                  - 3.0 * ppar_i * Grad_par(V_i, CELL_CENTRE)
+                  - Grad_par(S_par_i_par, CELL_CENTRE)
                   + J_ii_par_par + J_ie_par_par;
     //ddt(ppar_i) = 0.0;
 
-    ddt(n_e) = - Div_par_flux(V_e, n_e);
+    ddt(n_e) = - Div_par_flux(V_e, n_e, CELL_CENTRE);
 
     ddt(V_e) = - Vpar_Grad_par(V_e, V_e)
-               - Grad_par(ppar_e) / n_e
+               - Grad_par(ppar_e, CELL_YLOW) / n_e
                - Epar;
 
-    ddt(pperp_e) = - Vpar_Grad_par(V_e, pperp_e)
-                   - pperp_e * Grad_par(V_e)
-                   - Grad_par(S_perp_e_par)
+    ddt(pperp_e) = - Vpar_Grad_par(V_e, pperp_e, CELL_CENTRE)
+                   - pperp_e * Grad_par(V_e, CELL_CENTRE)
+                   - Grad_par(S_perp_e_par, CELL_CENTRE)
                    + J_ee_perp_perp + J_ei_perp_perp;
     //ddt(pperp_e) = 0.0;
 
-    ddt(ppar_e) = - Vpar_Grad_par(V_e, ppar_e)
-                  - 3.0 * ppar_e * Grad_par(V_e)
-                  - Grad_par(S_par_e_par)
+    ddt(ppar_e) = - Vpar_Grad_par(V_e, ppar_e, CELL_CENTRE)
+                  - 3.0 * ppar_e * Grad_par(V_e, CELL_CENTRE)
+                  - Grad_par(S_par_e_par, CELL_CENTRE)
                   + J_ee_par_par
                   + J_ei_par_par
                   ;
